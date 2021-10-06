@@ -6,7 +6,7 @@ import glob
 # 阈值
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 #棋盘格模板规格
-w = 5
+w = 6
 h = 4
 # 世界坐标系中的棋盘格点,例如(0,0,0), (1,0,0), (2,0,0) ....,(8,5,0)，去掉Z坐标，记为二维矩阵
 objp = np.zeros((w*h,3), np.float32)
@@ -31,17 +31,18 @@ for fname in images:
         # 将角点在图像上显示
         cv2.drawChessboardCorners(img, (w,h), corners, ret)
         cv2.imshow('findCorners',img)
-        cv2.waitKey(100)
+        cv2.waitKey(1000)
 cv2.destroyAllWindows()
-ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
+
+ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape, None, None)
 print (("ret:"),ret)
 print (("mtx:\n"),mtx)        # 内参数矩阵
 print (("dist:\n"),dist)      # 畸变系数   distortion cofficients = (k_1,k_2,p_1,p_2,k_3)
 print (("rvecs:\n"),rvecs)    # 旋转向量  # 外参数
 print (("tvecs:\n"),tvecs)    # 平移向量  # 外参数
 # 去畸变
-img2 = cv2.imread('../pictures/*.jpg')
-h,w = img2.shape[:2]
+img2 = cv2.imread('../pictures/WIN_20211006_15_57_59_Pro.jpg')
+h,w = 1080,1920
 newcameramtx, roi=cv2.getOptimalNewCameraMatrix(mtx,dist,(w,h),0,(w,h)) # 自由比例参数
 dst = cv2.undistort(img2, mtx, dist, None, newcameramtx)
 # 根据前面ROI区域裁剪图片
